@@ -44,8 +44,8 @@ steps:
     python -m pip install --upgrade pip setuptools wheel
     pip install -r requirements.txt
     pip install unittest-xml-reporting pycodestyle
-    apt-get update
-    apt-get install -y postgresql-9.6 redis-server awscli
+    sudo apt-get update
+    sudo apt-get install -y postgresql-9.6 redis-server awscli
   displayName: 'Install prerequisites'
 
 - script: |
