@@ -9,6 +9,8 @@ variables:
 
 trigger:
 - main
+- development
+- azure-pipeline
 
 pool:
   vmImage: 'ubuntu-latest'
