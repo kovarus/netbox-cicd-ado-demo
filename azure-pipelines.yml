@@ -1,0 +1,67 @@
+# Python Django
+# Test a Django project on multiple versions of Python.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+
+variables:
+- name: tf_version
+  value: 0.14.2
+
+trigger:
+- main
+- development
+- azure-pipeline
+
+pool:
+  vmImage: 'ubuntu-latest'
+strategy:
+  matrix:
+    Python36:
+      PYTHON_VERSION: '3.6'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(PYTHON_VERSION)'
+    architecture: 'x64'
+
+- task: PythonScript@0
+  displayName: 'Export project path'
+  inputs:
+    scriptSource: 'inline'
+    script: |
+      """Search all subdirectories for `manage.py`."""
+      from glob import iglob
+      from os import path
+      # Python >= 3.5
+      manage_py = next(iglob(path.join('**', 'manage.py'), recursive=True), None)
+      if not manage_py:
+          raise SystemExit('Could not find a Django project')
+      project_location = path.dirname(path.abspath(manage_py))
+      print('Found Django project in', project_location)
+      print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
+
+- script: |
+    echo $(tfc-api)
+    python -m pip install --upgrade pip setuptools wheel
+    pip install -r requirements.txt
+    pip install unittest-xml-reporting pycodestyle
+    sudo systemctl stop postgresql
+    sudo apt-get --purge remove postgresql*
+    sudo rm -rf /etc/postgresql-common /var/log/postgresql /var/lib/postgresql /etc/postgresql
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+    sudo apt-get update
+    sudo apt-get install -y postgresql-9.6 redis-server awscli terraform=${{ variables.tf_version }}
+    sudo -u postgres psql -U postgres -c "alter user postgres with password 'test';"
+
+  displayName: 'Install prerequisites'
+
+- script: |
+    PGPASSWORD='test' psql -h localhost -U postgres -c 'SELECT version();'
+    redis-cli ping
+  displayName: 'Test service dependencies'
+
+- script: |
+    ./scripts/cibuild.sh
+  displayName: 'Run tests'
