@@ -3,20 +3,21 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
+variables:
+- name: tf_version
+  value: 0.14.2
+
 trigger:
 - main
+- development
+- azure-pipeline
 
 pool:
   vmImage: 'ubuntu-latest'
 strategy:
   matrix:
-    Python35:
-      PYTHON_VERSION: '3.5'
     Python36:
       PYTHON_VERSION: '3.6'
-    Python37:
-      PYTHON_VERSION: '3.7'
-  maxParallel: 3
 
 steps:
 - task: UsePythonVersion@0
@@ -41,25 +42,26 @@ steps:
       print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
 
 - script: |
+    echo $(tfc-api)
     python -m pip install --upgrade pip setuptools wheel
     pip install -r requirements.txt
     pip install unittest-xml-reporting pycodestyle
+    sudo systemctl stop postgresql
+    sudo apt-get --purge remove postgresql*
+    sudo rm -rf /etc/postgresql-common /var/log/postgresql /var/lib/postgresql /etc/postgresql
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
     sudo apt-get update
-    sudo apt-get install -y postgresql-9.6 redis-server awscli
+    sudo apt-get install -y postgresql-9.6 redis-server awscli terraform=${{ variables.tf_version }}
+    sudo -u postgres psql -U postgres -c "alter user postgres with password 'test';"
+
   displayName: 'Install prerequisites'
 
 - script: |
-    psql --version
-    psql -h localhost -U postgres -c 'SELECT version();'
+    PGPASSWORD='test' psql -h localhost -U postgres -c 'SELECT version();'
     redis-cli ping
   displayName: 'Test service dependencies'
 
 - script: |
     ./scripts/cibuild.sh
   displayName: 'Run tests'
-
-- task: PublishTestResults@2
-  inputs:
-    testResultsFiles: "**/TEST-*.xml"
-    testRunTitle: 'Python $(PYTHON_VERSION)'
-  condition: succeededOrFailed()

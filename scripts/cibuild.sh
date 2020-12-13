@@ -40,6 +40,7 @@ cp netbox/netbox/configuration.example.py $CONFIG
 sed -i -e "s/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \['*'\]/g" $CONFIG
 sed -i -e "s/SECRET_KEY = ''/SECRET_KEY = 'netboxci'/g" $CONFIG
 sed -i -e "s/'USER': ''/'USER': 'postgres'/g" $CONFIG
+sed -i -e "s/'PASSWORD': ''/'PASSWORD': 'test'/g" $CONFIG
 
 # Run NetBox tests
 ./netbox/manage.py test netbox/
