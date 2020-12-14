@@ -8,9 +8,9 @@ variables:
   value: 0.14.2
 
 trigger:
-- main
 - development
 - azure-pipeline
+- feature/*
 
 pool:
   vmImage: 'ubuntu-latest'
