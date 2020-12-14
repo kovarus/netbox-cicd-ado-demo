@@ -7,7 +7,7 @@ variables:
 - name: tf_version
   value: 0.14.2
 - name: env_id
-  value: 009
+  value: 010
 
 trigger:
 - development
@@ -96,3 +96,9 @@ steps:
     tagPattern: 'v*.*.*'
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
+
+- displayName: 'Deploy New Version'
+  script: |
+    echo "credentials \"app.terraform.io\" {token = \"$(tfc-token)\"}" >> ~/.terraformrc
+    cd terraform; terraform init
+    TF_VAR_netbox_version=$(git describe --tags --abbrev=0) TF_VAR_active_app=$(deploy_to) TF_VAR_env_id=$(env_id) terraform apply
