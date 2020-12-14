@@ -73,7 +73,7 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      ACTIVE_SIDE=$(az vm show -n nb-app-azure-$(env_id)-blue.kpscdemo.io -g netbox-demo-$(env_id)-rg --query 'tags.ActiveSide -o tsv)
+      ACTIVE_SIDE=$(az vm show -n nb-app-azure-$(env_id)-blue.kpscdemo.io -g netbox-demo-$(env_id)-rg --query 'tags.ActiveSide' -o tsv)
       echo "##vso[task.setvariable variable=active_side]$ACTIVE_SIDE"
 
 - script: |
