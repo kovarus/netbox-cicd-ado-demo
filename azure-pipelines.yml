@@ -97,8 +97,8 @@ steps:
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
 
-- displayName: 'Deploy New Version'
-  script: |
+- script: |
     echo "credentials \"app.terraform.io\" {token = \"$(tfc-token)\"}" >> ~/.terraformrc
     cd terraform; terraform init
     TF_VAR_netbox_version=$(git describe --tags --abbrev=0) TF_VAR_active_app=$(deploy_to) TF_VAR_env_id=$(env_id) terraform apply
+  displayName: 'Deploy New Version'
