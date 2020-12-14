@@ -26,4 +26,5 @@ module "netbox_app" {
   active_app     = var.active_app
   env_id         = var.env_id
   netbox_version = netbox_version
+  tower_token    = tower_token
 }
