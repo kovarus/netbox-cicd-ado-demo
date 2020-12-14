@@ -82,8 +82,7 @@ steps:
       echo "##vso[task.setvariable variable=deploy_to]$DEPLOY_TO"
 
 - script: |
-
-    echo $(active_side)
+    echo $(deploy_to)
   displayName: 'Test output capture'
 
 - task: GitHubRelease@1
