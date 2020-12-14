@@ -64,3 +64,15 @@ steps:
 - script: |
     ./scripts/cibuild.sh
   displayName: 'Run tests'
+
+- task: GitHubRelease@1
+  displayName: 'Create Release'
+  inputs:
+    gitHubConnection: 'GitHub - kpsc-automation'
+    repositoryName: '$(Build.Repository.Name)'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'gitTag'
+    tagPattern: 'release-v*'
+    changeLogCompareToRelease: 'lastFullRelease'
+    changeLogType: 'commitBased'
