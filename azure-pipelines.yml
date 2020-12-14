@@ -6,6 +6,8 @@
 variables:
 - name: tf_version
   value: 0.14.2
+- name: env_id
+  value: 009
 
 trigger:
 - development
@@ -63,6 +65,14 @@ steps:
 # - script: |
 #     ./scripts/cibuild.sh
 #   displayName: 'Run tests'
+
+- task: AzureCLI@2
+  displayName: 'Get Active Side'
+  inputs:
+    azureSubscription: 'XSP24782|MICROSOFT|XSP24782|XSP319227 (dd4688e7-0261-48c4-843e-2047caef8e24)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az vm show -n nb-app-azure-$(env_id)-blue.kpscdemo.io -g netbox-demo-$(env_id)-rg --query ''tags.ActiveSide'' -o tsv'
 
 - task: GitHubRelease@1
   displayName: 'Create Release'
