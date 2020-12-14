@@ -103,7 +103,7 @@ steps:
     echo "netbox_version=\"$(git describe --tags --abbrev=0)\"" >> ./ado.auto.tfvars
     echo "active_app=\"$(deploy_to)\"" >> ./ado.auto.tfvars
     echo "env_id=\"$(env_id)\"" >> ./ado.auto.tfvars
-    cat ./ado.auto.tfvars
+    echo "tower_token=\"$(tower-token)\"" >> ./ado.auto.tfvars
     terraform init
     terraform apply
   displayName: 'Deploy New Version'
