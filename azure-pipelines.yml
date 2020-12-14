@@ -99,6 +99,7 @@ steps:
 
 - script: |
     echo "credentials \"app.terraform.io\" {token = \"$(tfc-token)\"}" >> ~/.terraformrc
-    cd terraform; terraform init
-    TF_VAR_netbox_version=$(git describe --tags --abbrev=0) TF_VAR_active_app=$(deploy_to) TF_VAR_env_id=$(env_id) terraform apply
+    cd terraform
+    terraform init -var="netbox_version=$(git describe --tags --abbrev=0)" -var="active_app=$(deploy_to)" -var="env_id=$(env_id)"
+    terraform apply -var="netbox_version=$(git describe --tags --abbrev=0)" -var="active_app=$(deploy_to)" -var="env_id=$(env_id)"
   displayName: 'Deploy New Version'
