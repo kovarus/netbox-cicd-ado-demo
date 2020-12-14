@@ -9,7 +9,6 @@ variables:
 
 trigger:
 - development
-- azure-pipeline
 - feature/*
 
 pool:
