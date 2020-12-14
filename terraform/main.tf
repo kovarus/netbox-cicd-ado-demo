@@ -25,6 +25,6 @@ module "netbox_app" {
   tower_params   = ["executed_from: Terraform Cloud demo-azure-ado-netbox"]
   active_app     = var.active_app
   env_id         = var.env_id
-  netbox_version = netbox_version
-  tower_token    = tower_token
+  netbox_version = var.netbox_version
+  tower_token    = var.tower_token
 }
