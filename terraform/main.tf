@@ -11,6 +11,7 @@ terraform {
 variable "active_app" {}
 variable "env_id" {}
 variable "netbox_version" {}
+variable "tower_token" {}
 
 module "netbox_app" {
   source  = "app.terraform.io/KPSC/netbox_cicd/azurerm"
