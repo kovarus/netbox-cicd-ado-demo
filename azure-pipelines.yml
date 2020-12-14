@@ -72,7 +72,9 @@ steps:
     azureSubscription: 'XSP24782|MICROSOFT|XSP24782|XSP319227 (dd4688e7-0261-48c4-843e-2047caef8e24)'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'echo "##vso[task.setvariable variable=active_side]$(az vm show -n nb-app-azure-$(env_id)-blue.kpscdemo.io -g netbox-demo-$(env_id)-rg --query ''tags.ActiveSide'' -o tsv"'
+    inlineScript: |
+      ACTIVE_SIDE=$(az vm show -n nb-app-azure-$(env_id)-blue.kpscdemo.io -g netbox-demo-$(env_id)-rg --query 'tags.ActiveSide -o tsv)
+      echo "##vso[task.setvariable variable=active_side]$ACTIVE_SIDE"
 
 - script: |
     echo $(active_side)
